@@ -30,9 +30,11 @@ public interface IGeneralService<Model extends CommonModel<ID>, ID extends Seria
 	
 	public List<Model> findByFilter(Map<String, Object> filter);
 	
+	public long countByFilter(Map<String, Object> filter);
+	
 	public List<Model> findByFilter(Map<String, Object> filter, String sort, String dsc);
 	
 	public List<Model> findByFilter(Map<String, Object> filter, int page, int pageSize, String sort, String dsc);
 	
-	public Page<Model> findByFilterWithPage(Map<String, Object> filter, int page, int pageSize, String sort, String dsc);
+	public Page<Model> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy, String order);
 }

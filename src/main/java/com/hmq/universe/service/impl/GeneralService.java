@@ -21,6 +21,9 @@ import com.hmq.universe.utis.query.ExpressionUtil;
 import com.hmq.universe.utis.query.JpaUtil;
 
 public class GeneralService<Model extends CommonModel<ID>, ID extends Serializable,Dao extends IGeneralDao<Model, ID>> implements IGeneralService<Model, ID> {
+	private static final Integer PAGESIZE=10; 
+	private static final String ORDER="DESC";
+	
 	@Autowired
 	private Dao dao;
 	
@@ -96,38 +99,57 @@ public class GeneralService<Model extends CommonModel<ID>, ID extends Serializab
 
 	@Override
 	public List<Model> findByFilter(Map<String, Object> filter) {
-		List<Model> modelList=null;
-		if (filter != null && filter.size() >= 1) {
-			Specification<Model> specs = ExpressionUtil.genExpressionByFilter(filter);
-			modelList = this.getDao().findAll(specs);
-		}else{
-			modelList= this.getDao().findAll();
-		}
-		return modelList;
-	}
-
-	@Override
-	public List<Model> findByFilter(Map<String, Object> filter, String sort, String dsc) {
-		List<Model> modelList=null;
-		Sort pageSort=JpaUtil.buildSort(sort, dsc);
-		if (filter != null && filter.size() >= 1) {
-			Specification<Model> specs = ExpressionUtil.genExpressionByFilter(filter);
-			modelList = this.getDao().findAll(specs,pageSort);
-		}else{
-			modelList= this.getDao().findAll(pageSort);
-		}
-		return modelList;
+		return this.findByFilter(filter, null, null, null, null);
 	}
 	
-	public List<Model> findByFilter(Map<String, Object> filter, int page, int pageSize, String sort, String dsc) {
-		Page<Model> pageData=this.findByFilterWithPage(filter, page, pageSize, sort, dsc);
-		return pageData.getContent();
+	@Override
+	public long countByFilter(Map<String, Object> filter) {
+		long count=0;
+		if (filter != null && filter.size() >= 1) {
+			Specification<Model> spec = ExpressionUtil.genExpressionByFilter(filter);
+			count = this.getDao().count(spec);
+		}else{
+			count= this.getDao().count();
+		}
+		return count;
 	}
 
 	@Override
-	public Page<Model> findByFilterWithPage(Map<String, Object> filter, int page, int pageSize, String sort,
-			String dsc) {
-		Pageable pageable = JpaUtil.buildPageable(page, pageSize, sort, dsc);
+	public List<Model> findByFilter(Map<String, Object> filter, String orderBy, String order) {
+		return this.findByFilter(filter, null, null, orderBy, order);
+	}
+	
+	public List<Model> findByFilter(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy, String order) {
+		Specification<Model> spec = ExpressionUtil.genExpressionByFilter(filter);
+		List<Model> modelList=null;
+		if(pageIndex!=null){
+			if(pageSize==null){
+				pageSize=PAGESIZE;
+			}
+			Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
+			modelList=this.getDao().findAll(spec, pageable).getContent();
+		}else if(orderBy!=null){
+			if(order==null){
+				order=ORDER;
+			}
+			Sort pageSort=JpaUtil.buildSort(orderBy, order);
+			modelList=this.getDao().findAll(spec,pageSort);
+		}else{
+			modelList=this.getDao().findAll(spec);
+		}
+		return modelList;
+	}
+
+	@Override
+	public Page<Model> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy, String order){
+		if(pageSize==null){
+			pageSize=PAGESIZE;
+		}
+		if(order==null){
+			order=ORDER;
+		}
+		
+		Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
 		Page<Model> pageData = null;
 		if (filter != null && filter.size() >= 1) {
 			Specification<Model> specs = ExpressionUtil.genExpressionByFilter(filter);
