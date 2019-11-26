@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @MappedSuperclass
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+//@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class CommonModel<ID extends Serializable> extends IDModel<ID>{
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;

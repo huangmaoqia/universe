@@ -51,7 +51,7 @@ public class GeneralController<Model extends CommonModel<ID>, ID extends Seriali
 		return this.service.saveAll(entities).size();
 	}
 
-	@GetMapping("/serach")
+	@GetMapping("/search")
 	public List<Model> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy, String order) {
 		Map<String, Object> filter = getParams(request);
 		List<Model> modelList = null;

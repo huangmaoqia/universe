@@ -9,34 +9,49 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 
-public final class JpaUtil{
+public final class JpaUtil {
 	
-	public static Sort buildSort(String sort, String dsc) {
-		if(dsc==null){
-			dsc="asc";
+	private static final Integer PAGESIZE=10; 
+	private static final String ORDER="DESC";
+
+	public static Sort buildSort(String orderBy, String order) {
+		if (order == null) {
+			order = ORDER;
 		}
-		String[] sortArr = sort.split(",");
-		String[] dscArr = dsc.split(",");
+		String[] orderByArr = orderBy.split(",");
+		String[] orederArr = order.split(",");
 		List<Order> orderList = new ArrayList<Order>();
-		if (sortArr.length != dscArr.length) {
-			throw new RuntimeException("buildPageable.sort.dsc,sort.length<>dsc.length");
-		}else{
-			for (int i = 0; i < sortArr.length; ++i) {
-				Order order = new Order("asc".equalsIgnoreCase(dscArr[i]) ? Direction.ASC : Direction.DESC, sortArr[i]);
-				orderList.add(order);
+		if (orderByArr.length != orederArr.length) {
+			String[] _orderArr=new String[orderByArr.length];
+			for (int i = 0; i < orderByArr.length; ++i) {
+				if(i<orederArr.length) {
+					_orderArr[i]=orederArr[i];
+				}else {
+					_orderArr[i]=orederArr[0];
+				}
+			}
+			orederArr=_orderArr;
+		} else {
+			for (int i = 0; i < orderByArr.length; ++i) {
+				Order o = new Order("asc".equalsIgnoreCase(orederArr[i]) ? Direction.ASC : Direction.DESC, orderByArr[i]);
+				orderList.add(o);
 			}
 		}
 		Sort pageSort = Sort.by(orderList);
 		return pageSort;
 	}
-	
-	public static Pageable buildPageable(int page, int pageSize, String sort, String dsc) {
+
+	public static Pageable buildPageable(Integer pageIndex, Integer pageSize, String orderBy, String order) {
 		Pageable pageable = null;
-		if(sort!=null){
-			Sort pageSort=buildSort(sort, dsc);
-			pageable = new PageRequest(page, pageSize, pageSort);
+		if (pageSize == null) {
+			pageSize = PAGESIZE;
+		}
+		
+		if (orderBy != null) {
+			Sort pageSort = buildSort(orderBy, order);
+			pageable = new PageRequest(pageIndex-1, pageSize, pageSort);
 		} else {
-			pageable = new PageRequest(page, pageSize);
+			pageable = new PageRequest(pageIndex-1, pageSize);
 		}
 		return pageable;
 	}
