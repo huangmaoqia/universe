@@ -9,6 +9,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import com.hmq.universe.model.po.IDModel;
 
 @NoRepositoryBean
-public interface IGeneralDao<Model extends IDModel<ID>, ID extends Serializable>
-		extends JpaRepository<Model, ID>, JpaSpecificationExecutor<Model> {
+public interface IGeneralDao<M extends IDModel<ID>, ID extends Serializable>
+		extends JpaRepository<M, ID>, JpaSpecificationExecutor<M> {
 }

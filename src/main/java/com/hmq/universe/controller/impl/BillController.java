@@ -15,9 +15,10 @@ import com.hmq.universe.service.IBillService;
 
 @RestController
 @RequestMapping("/bill")
-public class BillController extends GeneralController<Bill, String, IBillService>{
+public class BillController extends GeneralController<BillVO, Bill, String, IBillService> {
 	@GetMapping("/search2")
-	public List<BillVO> serach2(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy, String order) {
+	public List<BillVO> serach2(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
+			String order) {
 		Map<String, Object> filter = getParams(request);
 		return this.getService().findByFilter2(filter);
 	}

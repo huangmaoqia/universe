@@ -6,38 +6,41 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
 
 import com.hmq.universe.model.po.CommonModel;
 
-public interface IGeneralService<Model extends CommonModel<ID>, ID extends Serializable> {
+public interface IGeneralService<M extends CommonModel<ID>, ID extends Serializable> {
 
-	public Model getById(ID id);
+	public M getById(ID id);
 
 	public void deleteById(ID id);
 
-	public Model saveOne(Model entity);
+	public M saveOne(M entity);
 
-	public List<Model> saveAll(List<Model> entities);
+	public List<M> saveAll(List<M> entities);
+	
+	public long countBySpecification(Specification<M> spec);
 
-	public List<Model> findBySpecification(Specification<Model> spec);
+	public List<M> findBySpecification(Specification<M> spec);
 
-	public List<Model> findBySpecification(Specification<Model> spec, String sort, String dsc);
+	public List<M> findBySpecification(Specification<M> spec, String orderBy, String order);
 
-	public List<Model> findBySpecification(Specification<Model> spec, int page, int pageSize, String sort, String dsc);
-
-	public Page<Model> findBySpecificationWithPage(Specification<Model> spec, int page, int pageSize, String sort,
-			String dsc);
-
-	public List<Model> findByFilter(Map<String, Object> filter);
-
-	public long countByFilter(Map<String, Object> filter);
-
-	public List<Model> findByFilter(Map<String, Object> filter, String orderBy, String order);
-
-	public List<Model> findByFilter(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
+	public List<M> findBySpecification(Specification<M> spec, Integer pageIndex, Integer pageSize, String orderBy,
 			String order);
 
-	public Page<Model> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize,
-			String orderBy, String order);
+	public Page<M> findBySpecificationWithPage(Specification<M> spec, Integer pageIndex, Integer pageSize, String orderBy,
+			String order);
+
+	public long countByFilter(Map<String, Object> filter);
+	
+	public List<M> findByFilter(Map<String, Object> filter);
+
+	public List<M> findByFilter(Map<String, Object> filter, String orderBy, String order);
+
+	public List<M> findByFilter(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
+			String order);
+
+	public Page<M> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
+			String order);
+	
 }

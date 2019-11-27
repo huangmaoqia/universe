@@ -1,7 +1,6 @@
 package com.hmq.universe.controller.impl;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,9 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.hmq.universe.model.po.CommonModel;
-import com.hmq.universe.service.IGeneralService;
+import com.hmq.universe.service.IGeneralVService;
 
-public class GeneralController<Model extends CommonModel<ID>, ID extends Serializable, Service extends IGeneralService<Model, ID>> {
+public class GeneralController<V, M extends CommonModel<ID>, ID extends Serializable, Service extends IGeneralVService<V, M, ID>> {
 	@Autowired
 	private Service service;
 
@@ -31,8 +30,8 @@ public class GeneralController<Model extends CommonModel<ID>, ID extends Seriali
 	}
 
 	@GetMapping("/get/{id}")
-	public Model getById(@PathVariable ID id) {
-		Model model = this.service.getById(id);
+	public M getById(@PathVariable ID id) {
+		M model = this.service.getById(id);
 		return model;
 	}
 
@@ -42,19 +41,20 @@ public class GeneralController<Model extends CommonModel<ID>, ID extends Seriali
 	}
 
 	@PostMapping("/saveOne")
-	public ID saveOne(@RequestBody Model entity) {
+	public ID saveOne(@RequestBody M entity) {
 		return this.service.saveOne(entity).getId();
 	}
 
 	@PostMapping("/saveAll")
-	public int saveAll(@RequestBody List<Model> entities) {
+	public int saveAll(@RequestBody List<M> entities) {
 		return this.service.saveAll(entities).size();
 	}
 
 	@GetMapping("/search")
-	public List<Model> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy, String order) {
+	public List<M> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
+			String order) {
 		Map<String, Object> filter = getParams(request);
-		List<Model> modelList = null;
+		List<M> modelList = null;
 		if (pageIndex != null) {
 			modelList = this.service.findByFilter(filter, pageIndex, pageSize, orderBy, order);
 		} else if (orderBy != null) {
@@ -64,21 +64,22 @@ public class GeneralController<Model extends CommonModel<ID>, ID extends Seriali
 		}
 		return modelList;
 	}
-	
+
 	@GetMapping("/count")
 	public long count(HttpServletRequest request) {
 		Map<String, Object> filter = getParams(request);
 		return this.service.countByFilter(filter);
 	}
-	
+
 	@GetMapping("/serachWithPage")
-	public Page<Model> serachWithPage(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy, String order) {
+	public Page<M> serachWithPage(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
+			String order) {
 		Map<String, Object> filter = getParams(request);
-		Page<Model> modelPage = this.service.findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
+		Page<M> modelPage = this.service.findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
 		return modelPage;
 	}
-	
-	private Set<String> pageKeySet=new HashSet<String>();
+
+	private Set<String> pageKeySet = new HashSet<String>();
 	{
 		pageKeySet.add("pageIndex");
 		pageKeySet.add("pageSize");
@@ -95,7 +96,7 @@ public class GeneralController<Model extends CommonModel<ID>, ID extends Seriali
 		while (entries.hasNext()) {
 			Entry<String, String[]> entry = entries.next();
 			key = (String) entry.getKey();
-			if(pageKeySet.contains(key)){
+			if (pageKeySet.contains(key)) {
 				continue;
 			}
 			Object valueObj = entry.getValue();
