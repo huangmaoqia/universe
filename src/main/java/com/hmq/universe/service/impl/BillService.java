@@ -1,10 +1,8 @@
 package com.hmq.universe.service.impl;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import com.hmq.universe.model.vo.BillVO;
 import com.hmq.universe.service.IBillService;
 import com.hmq.universe.service.IUserService;
 import com.hmq.universe.utis.DataRefUtil;
-import com.hmq.universe.utis.query.Expression;
 
 @Service
 @Transactional
@@ -29,13 +26,13 @@ public class BillService extends GeneralService<Bill, String, IBillDao> implemen
 	@Override
 	public List<BillVO> findByFilter2(Map<String, Object> filter) {
 		List<Bill> billList= this.findByFilter(filter, null, null, null, null);
-		
 		List<BillVO> billVOList=JSON.parseArray(JSON.toJSONString(billList), BillVO.class);
 		
-		DataRefUtil<Bill,User> df=DataRefUtil.getInstance();
-		df.addRef(Bill::getCreater, User::getId);
-		df.addDRef(User::getUserName, Bill::setCreaterName);
+		DataRefUtil<BillVO,User> df=DataRefUtil.newInstance();
+		df.addRef(BillVO::getCreater, User::getId);
+		df.addDRef(User::getUserName, BillVO::setCreaterName);    
 		df.ref(billVOList, userService);
+		
 		return billVOList;
 	}
 }

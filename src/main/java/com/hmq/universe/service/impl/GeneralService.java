@@ -73,8 +73,7 @@ public class GeneralService<Model extends CommonModel<ID>, ID extends Serializab
 
 	@Override
 	public List<Model> findBySpecification(Specification<Model> spec) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getDao().findAll(spec);
 	}
 
 	@Override

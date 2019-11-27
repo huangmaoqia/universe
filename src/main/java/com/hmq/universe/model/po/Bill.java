@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+
+@Entity
+@Table(name = "t_bill")
 public class Bill extends CommonModel<String> {
 
 	private BigDecimal money;
@@ -17,13 +20,4 @@ public class Bill extends CommonModel<String> {
 		this.money = money;
 	}
 	
-	public String getCreaterName() {
-		return createrName;
-	}
-
-	public void setCreaterName(String createrName) {
-		this.createrName = createrName;
-	}
-
-	private String createrName;
 }

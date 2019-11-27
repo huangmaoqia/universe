@@ -2,11 +2,8 @@ package com.hmq.universe.model.vo;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.hmq.universe.model.po.CommonModel;
 
-@Entity
-@Table(name = "t_bill")
 public class BillVO extends CommonModel<String> {
 
 	private BigDecimal money;
@@ -18,5 +15,15 @@ public class BillVO extends CommonModel<String> {
 	public void setMoney(BigDecimal money) {
 		this.money = money;
 	}
+	
+	public String getCreaterName() {
+		return createrName;
+	}
+
+	public void setCreaterName(String createrName) {
+		this.createrName = createrName;
+	}
+
+	private String createrName;
 
 }
