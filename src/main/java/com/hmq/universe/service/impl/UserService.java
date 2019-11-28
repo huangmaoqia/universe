@@ -10,6 +10,6 @@ import com.hmq.universe.service.IUserService;
 
 @Service
 @Transactional
-public class UserService extends GeneralVService<UserVO, User, String, IUserDao> implements IUserService {
+public class UserService extends GenViewService<UserVO, User, String, IUserDao> implements IUserService {
 
 }

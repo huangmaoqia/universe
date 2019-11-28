@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.hmq.universe.model.po.CommonModel;
-import com.hmq.universe.service.IGeneralVService;
+import com.hmq.universe.model.po.IDModel;
+import com.hmq.universe.service.IGenService;
 
-public class GeneralController<V, M extends CommonModel<ID>, ID extends Serializable, Service extends IGeneralVService<V, M, ID>> {
+public class GenController<PO extends IDModel<ID>, ID extends Serializable, Service extends IGenService<PO, ID>> {
 	@Autowired
 	private Service service;
 
@@ -30,8 +30,8 @@ public class GeneralController<V, M extends CommonModel<ID>, ID extends Serializ
 	}
 
 	@GetMapping("/get/{id}")
-	public M getById(@PathVariable ID id) {
-		M model = this.service.getById(id);
+	public PO getById(@PathVariable ID id) {
+		PO model = this.service.getById(id);
 		return model;
 	}
 
@@ -41,28 +41,21 @@ public class GeneralController<V, M extends CommonModel<ID>, ID extends Serializ
 	}
 
 	@PostMapping("/saveOne")
-	public ID saveOne(@RequestBody M entity) {
-		return this.service.saveOne(entity).getId();
+	public ID saveOne(@RequestBody PO po) {
+		return this.service.saveOne(po).getId();
 	}
 
 	@PostMapping("/saveAll")
-	public int saveAll(@RequestBody List<M> entities) {
-		return this.service.saveAll(entities).size();
+	public int saveAll(@RequestBody List<PO> poList) {
+		return this.service.saveAll(poList).size();
 	}
 
 	@GetMapping("/search")
-	public List<M> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
+	public List<PO> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
 		Map<String, Object> filter = getParams(request);
-		List<M> modelList = null;
-		if (pageIndex != null) {
-			modelList = this.service.findByFilter(filter, pageIndex, pageSize, orderBy, order);
-		} else if (orderBy != null) {
-			modelList = this.service.findByFilter(filter, orderBy, order);
-		} else {
-			modelList = this.service.findByFilter(filter);
-		}
-		return modelList;
+		List<PO> poList = this.service.findByFilter(filter, pageIndex, pageSize, orderBy, order);
+		return poList;
 	}
 
 	@GetMapping("/count")
@@ -72,11 +65,11 @@ public class GeneralController<V, M extends CommonModel<ID>, ID extends Serializ
 	}
 
 	@GetMapping("/serachWithPage")
-	public Page<M> serachWithPage(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
+	public Page<PO> serachWithPage(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
 		Map<String, Object> filter = getParams(request);
-		Page<M> modelPage = this.service.findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
-		return modelPage;
+		Page<PO> poPage = this.service.findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
+		return poPage;
 	}
 
 	private Set<String> pageKeySet = new HashSet<String>();

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.hmq.universe.model.po.User;
-import com.hmq.universe.service.IGeneralService;
+import com.hmq.universe.service.IGenService;
 import com.hmq.universe.utis.query.Expression;
 import com.hmq.universe.utis.query.IGetter;
 import com.hmq.universe.utis.query.ISetter;
@@ -35,7 +35,7 @@ public class DataRefUtil<S, T> {
 		return this;
 	}
 
-	public <V,TS extends IGeneralService> void ref(List<S> sourceList, TS targetService) {
+	public <V,TS extends IGenService> void ref(List<S> sourceList, TS targetService) {
 		Expression<T> exp = new Expression<>();
 		
 		Set<IGetter<S>> sGetterSet = map.keySet();
@@ -47,7 +47,7 @@ public class DataRefUtil<S, T> {
 			}
 			exp.addCdIn(map.get(sGetter), valueList);
 		}
-		List<T> tList = targetService.findBySpecification(exp);
+		List<T> tList = targetService.findBySpec(exp);
 		Map<String,T> key2TMap=new HashMap<String,T>();
 		for (T obj : tList) {
 			String key="";

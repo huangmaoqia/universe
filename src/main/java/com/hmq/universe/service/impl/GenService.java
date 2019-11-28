@@ -11,17 +11,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.hmq.universe.dao.IGeneralDao;
+import com.hmq.universe.dao.IGenDao;
 import com.hmq.universe.model.po.CommonModel;
+import com.hmq.universe.model.po.IDModel;
 import com.hmq.universe.model.vo.ITokenVO;
-import com.hmq.universe.service.IGeneralService;
+import com.hmq.universe.service.IGenService;
 import com.hmq.universe.utis.TokenUtil;
 import com.hmq.universe.utis.UUIDUtil;
 import com.hmq.universe.utis.query.ExpressionUtil;
 import com.hmq.universe.utis.query.JpaUtil;
 
-public class GeneralService<M extends CommonModel<ID>, ID extends Serializable, Dao extends IGeneralDao<M, ID>>
-		implements IGeneralService<M, ID> {
+public class GenService<PO extends IDModel<ID>, ID extends Serializable, Dao extends IGenDao<PO, ID>>
+		implements IGenService<PO, ID> {
 
 	@Autowired
 	private Dao dao;
@@ -31,8 +32,8 @@ public class GeneralService<M extends CommonModel<ID>, ID extends Serializable, 
 	}
 
 	@Override
-	public M getById(ID id) {
-		M model = this.dao.getOne(id);
+	public PO getById(ID id) {
+		PO model = this.dao.getOne(id);
 		return model;
 	}
 
@@ -42,58 +43,61 @@ public class GeneralService<M extends CommonModel<ID>, ID extends Serializable, 
 	}
 
 	@Override
-	public M saveOne(M entity) {
-		handleData(entity);
-		return this.dao.save(entity);
+	public PO saveOne(PO po) {
+		handleData(po);
+		return this.dao.save(po);
 	}
 
 	@Override
-	public List<M> saveAll(List<M> entities) {
-		handleData(entities);
-		return this.dao.saveAll(entities);
+	public List<PO> saveAll(List<PO> poList) {
+		handleData(poList);
+		return this.dao.saveAll(poList);
 	}
 
-	private void handleData(M entity) {
+	private void handleData(PO po) {
 		ITokenVO<ID> tokenVO = (ITokenVO<ID>) TokenUtil.getTokenVO();
-		if (entity.getCreateTime() == null) {
-			entity.setCreateTime(new Date());
+		if(po instanceof CommonModel){
+			CommonModel<ID> cpo=(CommonModel<ID>) po; 
+			if (cpo.getCreateTime() == null) {
+				cpo.setCreateTime(new Date());
+			}
+			if (cpo.getCreater() == null) {
+				cpo.setCreater(tokenVO.getUserid());
+			}
+			cpo.setUpdateTime(new Date());
+			cpo.setModifier(tokenVO.getUserid());
 		}
-		if (entity.getCreater() == null) {
-			entity.setCreater(tokenVO.getUserid());
-		}
-		entity.setUpdateTime(new Date());
-		entity.setModifier(tokenVO.getUserid());
 
-		if (entity.getId() == null) {
-			entity.setId((ID) UUIDUtil.newUUID());
+		if (po.getId() == null) {
+			po.setId((ID) UUIDUtil.newUUID());
 		}
 	}
 
-	private void handleData(List<M> entities) {
-		for (M entity : entities) {
-			handleData(entity);
+	private void handleData(List<PO> poList) {
+		for (PO po : poList) {
+			handleData(po);
 		}
 	}
 
 	@Override
-	public long countBySpecification(Specification<M> spec) {
+	public long countBySpec(Specification<PO> spec) {
 		return this.getDao().count(spec);
 	}
 	
 	@Override
-	public List<M> findBySpecification(Specification<M> spec) {
-		return this.findBySpecification(spec, null, null, null, null);
+	public List<PO> findBySpec(Specification<PO> spec) {
+		return this.findBySpec(spec, null, null, null, null);
 	}
 
 	@Override
-	public List<M> findBySpecification(Specification<M> spec, String orderBy, String order) {
-		return this.findBySpecification(spec, null, null, orderBy, order);
+	public List<PO> findBySpec(Specification<PO> spec, String orderBy, String order) {
+		return this.findBySpec(spec, null, null, orderBy, order);
 	}
 	
 	@Override
-	public List<M> findBySpecification(Specification<M> spec, Integer pageIndex, Integer pageSize, String orderBy,
+	public List<PO> findBySpec(Specification<PO> spec, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
-		List<M> modelList = null;
+		List<PO> modelList = null;
 		if (pageIndex != null) {
 			Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
 			modelList = this.getDao().findAll(spec, pageable).getContent();
@@ -107,36 +111,36 @@ public class GeneralService<M extends CommonModel<ID>, ID extends Serializable, 
 	}
 
 	@Override
-	public Page<M> findBySpecificationWithPage(Specification<M> spec, Integer pageIndex, Integer pageSize,
+	public Page<PO> findBySpecWithPage(Specification<PO> spec, Integer pageIndex, Integer pageSize,
 			String orderBy, String order) {
 		Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
-		Page<M> pageData = this.getDao().findAll(spec, pageable);
+		Page<PO> pageData = this.getDao().findAll(spec, pageable);
 		return pageData;
 	}
 
 	@Override
 	public long countByFilter(Map<String, Object> filter) {
-		Specification<M> spec = ExpressionUtil.genExpressionByFilter(filter);
+		Specification<PO> spec = ExpressionUtil.genExpressionByFilter(filter);
 		long count = this.getDao().count(spec);
 		return count;
 	}
 
 	@Override
-	public List<M> findByFilter(Map<String, Object> filter) {
+	public List<PO> findByFilter(Map<String, Object> filter) {
 		return this.findByFilter(filter, null, null, null, null);
 	}
 	
 	
 	@Override
-	public List<M> findByFilter(Map<String, Object> filter, String orderBy, String order) {
+	public List<PO> findByFilter(Map<String, Object> filter, String orderBy, String order) {
 		return this.findByFilter(filter, null, null, orderBy, order);
 	}
 
 	@Override
-	public List<M> findByFilter(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
+	public List<PO> findByFilter(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
-		Specification<M> spec = ExpressionUtil.genExpressionByFilter(filter);
-		List<M> modelList = null;
+		Specification<PO> spec = ExpressionUtil.genExpressionByFilter(filter);
+		List<PO> modelList = null;
 		if (pageIndex != null) {
 			Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
 			modelList = this.getDao().findAll(spec, pageable).getContent();
@@ -150,11 +154,11 @@ public class GeneralService<M extends CommonModel<ID>, ID extends Serializable, 
 	}
 
 	@Override
-	public Page<M> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
+	public Page<PO> findByFilterWithPage(Map<String, Object> filter, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
 		Pageable pageable = JpaUtil.buildPageable(pageIndex, pageSize, orderBy, order);
-		Specification<M> spec = ExpressionUtil.genExpressionByFilter(filter);
-		Page<M> pageData = this.getDao().findAll(spec, pageable);
+		Specification<PO> spec = ExpressionUtil.genExpressionByFilter(filter);
+		Page<PO> pageData = this.getDao().findAll(spec, pageable);
 		return pageData;
 	}
 

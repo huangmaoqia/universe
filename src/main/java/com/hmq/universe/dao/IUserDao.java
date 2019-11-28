@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.hmq.universe.model.po.User;
 
 @Repository
-public interface IUserDao extends IGeneralDao<User, String> {
+public interface IUserDao extends IGenDao<User, String> {
 
 }

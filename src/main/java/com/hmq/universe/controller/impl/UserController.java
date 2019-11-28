@@ -9,6 +9,6 @@ import com.hmq.universe.service.IUserService;
 
 @RestController
 @RequestMapping("/user")
-public class UserController extends GeneralController<UserVO, User, String, IUserService> {
+public class UserController extends GenViewController<UserVO, User, String, IUserService> {
 
 }
