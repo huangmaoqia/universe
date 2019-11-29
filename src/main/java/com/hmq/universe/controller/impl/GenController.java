@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.hmq.universe.model.po.IDModel;
+import com.hmq.universe.model.IDModel;
 import com.hmq.universe.service.IGenService;
 
 public class GenController<PO extends IDModel<ID>, ID extends Serializable, Service extends IGenService<PO, ID>> {
@@ -31,44 +31,44 @@ public class GenController<PO extends IDModel<ID>, ID extends Serializable, Serv
 
 	@GetMapping("/get/{id}")
 	public PO getById(@PathVariable ID id) {
-		PO model = this.service.getById(id);
+		PO model = this.getService().getById(id);
 		return model;
 	}
 
 	@PostMapping("/delete/{id}")
 	public void deleteById(ID id) {
-		this.service.deleteById(id);
+		this.getService().deleteById(id);
 	}
 
 	@PostMapping("/saveOne")
 	public ID saveOne(@RequestBody PO po) {
-		return this.service.saveOne(po).getId();
+		return this.getService().saveOne(po).getId();
 	}
 
 	@PostMapping("/saveAll")
 	public int saveAll(@RequestBody List<PO> poList) {
-		return this.service.saveAll(poList).size();
+		return this.getService().saveAll(poList).size();
 	}
 
 	@GetMapping("/search")
 	public List<PO> serach(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
 		Map<String, Object> filter = getParams(request);
-		List<PO> poList = this.service.findByFilter(filter, pageIndex, pageSize, orderBy, order);
+		List<PO> poList = this.getService().findByFilter(filter, pageIndex, pageSize, orderBy, order);
 		return poList;
 	}
 
 	@GetMapping("/count")
 	public long count(HttpServletRequest request) {
 		Map<String, Object> filter = getParams(request);
-		return this.service.countByFilter(filter);
+		return this.getService().countByFilter(filter);
 	}
 
 	@GetMapping("/serachWithPage")
 	public Page<PO> serachWithPage(HttpServletRequest request, Integer pageIndex, Integer pageSize, String orderBy,
 			String order) {
 		Map<String, Object> filter = getParams(request);
-		Page<PO> poPage = this.service.findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
+		Page<PO> poPage = this.getService().findByFilterWithPage(filter, pageIndex, pageSize, orderBy, order);
 		return poPage;
 	}
 

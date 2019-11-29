@@ -5,5 +5,4 @@ import com.hmq.universe.model.vo.BillVO;
 
 public interface IBillService extends IGenViewService<BillVO,Bill,String>{
 
-//	List<BillVO> findByFilter2(Map<String, Object> filter);
 }

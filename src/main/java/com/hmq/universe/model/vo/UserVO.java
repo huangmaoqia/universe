@@ -1,8 +1,9 @@
 package com.hmq.universe.model.vo;
 
-import com.hmq.universe.model.po.CommonModel;
+import com.hmq.universe.model.CommonModel;
+import com.hmq.universe.model.IVO;
 
-public class UserVO extends CommonModel<String> {
+public class UserVO extends CommonModel<String> implements IVO {
 
 	private String userName;
 

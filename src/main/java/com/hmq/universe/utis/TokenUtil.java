@@ -1,7 +1,7 @@
 package com.hmq.universe.utis;
 
-import com.hmq.universe.model.vo.ITokenVO;
-import com.hmq.universe.model.vo.TokenVO;
+import com.hmq.universe.model.ITokenVO;
+import com.hmq.universe.model.TokenVO;
 
 public class TokenUtil {
 	

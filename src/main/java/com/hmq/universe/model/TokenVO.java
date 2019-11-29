@@ -1,4 +1,4 @@
-package com.hmq.universe.model.vo;
+package com.hmq.universe.model;
 
 public class TokenVO implements ITokenVO<String>{
 

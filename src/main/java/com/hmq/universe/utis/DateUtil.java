@@ -28,7 +28,7 @@ public class DateUtil {
 			for (int i = 2; i <= 3; i++) {
 				String str = ymdMatcher.group(i);
 				if (str.length() == 0) {
-					yyyyMMddHHmmss.append(ymdMatcher.group("01"));
+					yyyyMMddHHmmss.append("01");
 				} else if (str.length() == 1) {
 					yyyyMMddHHmmss.append("0" + str);
 				} else {

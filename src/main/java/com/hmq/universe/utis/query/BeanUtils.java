@@ -21,8 +21,17 @@ public class BeanUtils {
 		}
 		return getMethodName.substring(0, 1).toLowerCase() + getMethodName.substring(1);
 	}
+	
+	public static <T,V> String convertToFieldName(ISetter<T,V> fn) {
+		SerializedLambda lambda = getSerializedLambda(fn);
+		String getMethodName = lambda.getImplMethodName();
+		if (getMethodName.startsWith("set")) {
+			getMethodName = getMethodName.substring(3);
+		}
+		return getMethodName.substring(0, 1).toLowerCase() + getMethodName.substring(1);
+	}
 
-	public static <T> SerializedLambda getSerializedLambda(IGetter<T> fn) {
+	public static <T> SerializedLambda getSerializedLambda(Object fn) {
 		Class<?> clazz = fn.getClass();
 		return Optional.ofNullable(FUNC_CACHE.get(clazz)).map(WeakReference::get).orElseGet(() -> {
 			SerializedLambda lambda = null;

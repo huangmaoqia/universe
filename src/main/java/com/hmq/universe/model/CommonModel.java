@@ -1,4 +1,4 @@
-package com.hmq.universe.model.po;
+package com.hmq.universe.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @MappedSuperclass
 //@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})

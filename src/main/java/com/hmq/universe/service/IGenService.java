@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.hmq.universe.model.po.IDModel;
+import com.hmq.universe.model.IDModel;
 
 public interface IGenService<PO extends IDModel<ID>, ID extends Serializable> {
 

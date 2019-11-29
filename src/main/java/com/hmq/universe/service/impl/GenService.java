@@ -12,9 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.hmq.universe.dao.IGenDao;
-import com.hmq.universe.model.po.CommonModel;
-import com.hmq.universe.model.po.IDModel;
-import com.hmq.universe.model.vo.ITokenVO;
+import com.hmq.universe.model.CommonModel;
+import com.hmq.universe.model.IDModel;
+import com.hmq.universe.model.ITokenVO;
 import com.hmq.universe.service.IGenService;
 import com.hmq.universe.utis.TokenUtil;
 import com.hmq.universe.utis.UUIDUtil;
@@ -33,25 +33,25 @@ public class GenService<PO extends IDModel<ID>, ID extends Serializable, Dao ext
 
 	@Override
 	public PO getById(ID id) {
-		PO model = this.dao.getOne(id);
+		PO model = this.getDao().getOne(id);
 		return model;
 	}
 
 	@Override
 	public void deleteById(ID id) {
-		this.dao.deleteById(id);
+		this.getDao().deleteById(id);
 	}
 
 	@Override
 	public PO saveOne(PO po) {
 		handleData(po);
-		return this.dao.save(po);
+		return this.getDao().save(po);
 	}
 
 	@Override
 	public List<PO> saveAll(List<PO> poList) {
 		handleData(poList);
-		return this.dao.saveAll(poList);
+		return this.getDao().saveAll(poList);
 	}
 
 	private void handleData(PO po) {

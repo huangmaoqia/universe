@@ -116,4 +116,8 @@ public class Expression<T> implements Specification<T> {
 	public <K> void addCdNotEq(IGetter<K> getter,Object value){
 		expressionList.add(new Condition<T>(getter, Condition.EComparisonOperator.NE, value));
 	}
+
+	public List<Specification<T>> getExpressionList() {
+		return expressionList;
+	}
 }

@@ -17,110 +17,120 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.hmq.universe.utis.DateUtil;
 
-
 public class Condition<T> implements Specification<T> {
 	private static final long serialVersionUID = 1L;
 	private String fieldName;
-	private IGetter iGetter;
 	private EComparisonOperator op;
 	private Object value;
-	
+
 	public enum EComparisonOperator {
 		EQ, NE, LIKE, GT, LT, GTE, LTE, IN
 	}
-	
-	public Condition(String fieldName,EComparisonOperator op,Object value){
-		this.fieldName=fieldName;
-		this.op=op;
-		this.value=value;
-	}
-	
-	public Condition(String fieldName,Object value){
-		this.fieldName=fieldName;
-		this.value=value;
-	}
-	
-	public Condition(IGetter iGetter,EComparisonOperator op,Object value){
-		this.iGetter=iGetter;
-		this.op=op;
-		this.value=value;
-	}
-	
-	@Override
-	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder){
-		if(fieldName==null || "".equals(fieldName)){
-			this.fieldName=BeanUtils.convertToFieldName(this.iGetter);
-		}
-		
-        if(op==null){
-			int index=fieldName.lastIndexOf("-");
-			if(index!=-1){
-				String opStr=fieldName.substring(index+1);
-				op=EComparisonOperator.valueOf(opStr);
-				fieldName=fieldName.substring(0, index);
-			}else{
-				op=EComparisonOperator.EQ;
-			}
-        }
-        Path expression=root.get(fieldName);
-        Class clazz=expression.getJavaType();
-        if(op==EComparisonOperator.IN){
-        	if(value instanceof String){
-        		String[] strArr=((String) value).split(",");
-        		value=Arrays.asList(strArr);
-        	}
-        }
-        
-        if(clazz==Date.class){
-        	if(value instanceof String){
-        		this.value=DateUtil.toDate(value.toString());
-        	}else if(value instanceof Collection){
-        		Set<Date> set=new HashSet<Date>();
-        		Collection<String> collection=(Collection<String>)value;
-        		for(String str:collection){
-        			set.add(DateUtil.toDate(str));
-        		}
-        		value=set;
-        	}
-        }
-        switch (op) {  
-        case EQ:  
-            return builder.equal(expression, value);  
-        case NE:  
-            return builder.notEqual(expression, value);  
-        case LIKE:  
-            return builder.like(expression, "%" + value + "%");  
-        case LT:  
-            return builder.lessThan(expression, (Comparable) value);  
-        case GT:  
-            return builder.greaterThan(expression, (Comparable) value);  
-        case LTE:  
-            return builder.lessThanOrEqualTo(expression, (Comparable) value);  
-        case GTE:  
-            return builder.greaterThanOrEqualTo(expression, (Comparable) value);  
-        case IN:
-//        	Collection values=(Collection)value;
-//            Predicate[] predicates = new Predicate[values.size()];  
-//            int i=0;  
-//            for(Object obj : values){  
-//            	predicates[i]=builder.equal(expression, obj);  
-//                i++;  
-//            }  
-//            return builder.or(predicates);
-        	In in = builder.in(expression);
-            Collection values=(Collection)value;
-            if(values.size()>0){
-	            for(Object obj : values){ 
-	            	in.value(obj);
-	            }
-	            return in;
-            }else{
-            	return builder.notEqual(expression, expression); 
-            }
-        default:  
-        	return null;
-        }  
-    }
 
-	
+	public Condition(String fieldName, EComparisonOperator op, Object value) {
+		this.fieldName = fieldName;
+		this.op = op;
+		this.value = value;
+	}
+
+	public Condition(String fieldName, Object value) {
+		this.fieldName = fieldName;
+		this.value = value;
+
+		int index = fieldName.lastIndexOf("-");
+		if (index != -1) {
+			String opStr = fieldName.substring(index + 1);
+			op = EComparisonOperator.valueOf(opStr);
+			this.fieldName = fieldName.substring(0, index);
+		} else {
+			op = EComparisonOperator.EQ;
+		}
+	}
+
+	public Condition(IGetter iGetter, EComparisonOperator op, Object value) {
+		this.fieldName = BeanUtils.convertToFieldName(iGetter);
+		this.op = op;
+		this.value = value;
+	}
+
+	@Override
+	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+		Path expression = root.get(fieldName);
+		
+		if (op == EComparisonOperator.IN) {
+			if (value instanceof String) {
+				String[] strArr = ((String) value).split(",");
+				value = Arrays.asList(strArr);
+			}
+		}
+
+		
+		Class clazz = expression.getJavaType();
+		if (clazz == Date.class) {
+			if (value instanceof String) {
+				this.value = DateUtil.toDate(value.toString());
+			} else if (value instanceof Collection) {
+				Set<Date> set = new HashSet<Date>();
+				Collection collection = (Collection) value;
+				for (Object obj : collection) {
+					if(obj instanceof String){
+						set.add(DateUtil.toDate((String)obj));
+					}else if(obj instanceof Date){
+						set.add((Date)obj);
+					}
+				}
+				value = set;
+			}
+		}
+		switch (op) {
+		case EQ:
+			return builder.equal(expression, value);
+		case NE:
+			return builder.notEqual(expression, value);
+		case LIKE:
+			return builder.like(expression, "%" + value + "%");
+		case LT:
+			return builder.lessThan(expression, (Comparable) value);
+		case GT:
+			return builder.greaterThan(expression, (Comparable) value);
+		case LTE:
+			return builder.lessThanOrEqualTo(expression, (Comparable) value);
+		case GTE:
+			return builder.greaterThanOrEqualTo(expression, (Comparable) value);
+		case IN:
+			// Collection values=(Collection)value;
+			// Predicate[] predicates = new Predicate[values.size()];
+			// int i=0;
+			// for(Object obj : values){
+			// predicates[i]=builder.equal(expression, obj);
+			// i++;
+			// }
+			// return builder.or(predicates);
+			In in = builder.in(expression);
+			Collection values = (Collection) value;
+			if (values.size() > 0) {
+				for (Object obj : values) {
+					in.value(obj);
+				}
+				return in;
+			} else {
+				return builder.notEqual(expression, expression);
+			}
+		default:
+			return null;
+		}
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public EComparisonOperator getOp() {
+		return op;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
 }
